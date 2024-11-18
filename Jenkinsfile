@@ -2,16 +2,15 @@ pipeline {
     agent { 
         node {
             label 'docker-agent'
-            }
-      }
+        }
+    }
     triggers {
         pollSCM '* * * * *'
-
     }
     stages {
         stage('Build') {
             steps {
-                echo "Building.."
+                echo "Stage 1"
                 sh '''
                 python3 -m venv venv
                 . venv/bin/activate
@@ -22,66 +21,23 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo "Testing.."
+                echo "Stage 2"
                 sh '''
+                . venv/bin/activate
+                cd myapp
                 python hello.py
-                python hello.py --name=Brad
+                python hello.py --name=Amuni
                 '''
             }
         }
         stage('Deliver') {
             steps {
-                echo 'Deliver....'
+                echo "Stage 3"
                 sh '''
-                echo "doing delivery stuff.."
+                python3 helloworld.py
+                echo "Ran all stages successfully.."
                 '''
             }
         }
     }
 }
-
-
-// pipeline {
-//     agent { 
-//         node {
-//             label 'docker-agent-python'
-//         }
-//     }
-//     triggers {
-//         pollSCM '* * * * *'
-//     }
-//     stages {
-//         stage('Checkout') {
-//             steps {
-//                 checkout scm
-//             }
-//         }
-//         stage('Build') {
-//             steps {
-//                 echo "Building.."
-//                 sh '''
-//                 cd myapp
-//                 pip install -r requirements.txt
-//                 '''
-//             }
-//         }
-//         stage('Test') {
-//             steps {
-//                 echo "Testing.."
-//                 sh '''
-//                 cd myapp
-//                 python3 hello.py
-//                 python3 hello.py --name=Brad
-//                 '''
-//             }
-//         }
-//         stage('Deliver') {
-//             steps {
-//                 echo 'Deliver....'
-//                 sh '''
-//                 echo "doing delivery stuff.."
-//                 '''
-//             }
-//         }
-//     }
-// }
